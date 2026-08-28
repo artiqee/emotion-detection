@@ -1,29 +1,22 @@
-import requests
-import json
+import unittest
+from EmotionDetection.emotion_detection import emotion_detector
 
-def emotion_detector(text_to_analyse):
-    url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
-    headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
-    input_json = { "raw_document": { "text": text_to_analyse } }
-    
-    response = requests.post(url, json=input_json, headers=headers)
-    
-    formatted_response = json.loads(response.text)
-    
-    emotions = formatted_response['emotionPredictions'][0]['emotion']
-    anger_score = emotions['anger']
-    disgust_score = emotions['disgust']
-    fear_score = emotions['fear']
-    joy_score = emotions['joy']
-    sadness_score = emotions['sadness']
-    
-    dominant_emotion = max(emotions, key=emotions.get)
-    
-    return {
-        'anger': anger_score,
-        'disgust': disgust_score,
-        'fear': fear_score,
-        'joy': joy_score,
-        'sadness': sadness_score,
-        'dominant_emotion': dominant_emotion
-    }
+class TestEmotionDetector(unittest.TestCase):
+    def test_emotion_detector(self):
+        result_1 = emotion_detector("I am glad this happened")
+        self.assertEqual(result_1['dominant_emotion'], 'joy')
+        
+        result_2 = emotion_detector("I am really mad about this")
+        self.assertEqual(result_2['dominant_emotion'], 'anger')
+        
+        result_3 = emotion_detector("I feel disgusted just hearing about this")
+        self.assertEqual(result_3['dominant_emotion'], 'disgust')
+        
+        result_4 = emotion_detector("I am so sad about this")
+        self.assertEqual(result_4['dominant_emotion'], 'sadness')
+        
+        result_5 = emotion_detector("I am really afraid that this will happen")
+        self.assertEqual(result_5['dominant_emotion'], 'fear')
+
+if __name__ == '__main__':
+    unittest.main()
