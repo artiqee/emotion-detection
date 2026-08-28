@@ -5,11 +5,11 @@ app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector")
 def emot_detector():
+
     text_to_analyze = request.args.get('textToAnalyze')
     
     response = emotion_detector(text_to_analyze)
     
-    # Проверка на пустой ввод (None)
     if response['dominant_emotion'] is None:
         return "Invalid text! Please try again!"
     
@@ -20,10 +20,15 @@ def emot_detector():
     sadness = response['sadness']
     dominant_emotion = response['dominant_emotion']
     
-    return f"For the given statement, the system response is 'anger': {anger}, 'disgust': {disgust}, 'fear': {fear}, 'joy': {joy} and 'sadness': {sadness}. The dominant emotion is {dominant_emotion}."
+    return (
+        f"For the given statement, the system response is 'anger': {anger}, "
+        f"'disgust': {disgust}, 'fear': {fear}, 'joy': {joy} and "
+        f"'sadness': {sadness}. The dominant emotion is {dominant_emotion}."
+    )
 
 @app.route("/")
 def render_index_page():
+
     return render_template('index.html')
 
 if __name__ == "__main__":
